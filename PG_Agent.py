@@ -94,7 +94,7 @@ class PGAgent():
 
 N=128
 T=7
-n=7
+n=30
 discount=0.99
 path = '/Users/danielwang/PycharmProjects/GraphRL/state_dicts/actor.pth'
 agent = PGAgent(discount, N, T, n)

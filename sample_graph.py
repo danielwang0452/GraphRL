@@ -21,7 +21,7 @@ def sample_n_graphs(N): # returns dataloader
 
         # Assign a random color to each node
 
-        color_idx = np.random.randint(0, c, size=(n,))
+        color_idx = np.random.randint(4, 5, size=(n,))
         node_colors = {node: color_palette[color_idx[n]] for n, node in enumerate(G.nodes())}
         # Initialize a dictionary to store the size of the connected component for each node
         #component_sizes = {node: 0 for node in G.nodes()}

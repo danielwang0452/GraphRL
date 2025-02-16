@@ -8,7 +8,7 @@ import copy
 
 color_palette = [0, 1, 2, 3, 4]
 colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F6']
-k = 7  # Number of edges
+k = 30  # Number of edges
 c = 5  # Number of distinct colors
 
 def sample_n_trajectories(agent, N, T, n, visualise=False):
@@ -42,12 +42,11 @@ def sample_n_trajectories(agent, N, T, n, visualise=False):
     if visualise: # draw a graph at timestep 0 and T
         data_0, data_T = batches[0].to_data_list()[0], batches[-1].to_data_list()[0]
         print(f'rewards: {data_0.reward}, {data_T.reward}')
-        datas = [data_0, data_T]
         datas = []
         for b, batch in enumerate(batches):
             if b % ((len(batches))//5+1)==0:
                 datas.append(batches[b].to_data_list()[0])
-        print(len(datas))
+        datas = [data_0, data_T]
         show_graphs(datas)
         '''
         for data in datas:
@@ -86,12 +85,12 @@ def show_graphs(datas):
         pos = nx.spring_layout(G, seed=42)
 
         # Draw the graph on the given axis
-        nx.draw(G, pos, with_labels=True, node_color=[node_colors[node] for node in G.nodes()],
+        nx.draw(G, pos, with_labels=False, node_color=[node_colors[node] for node in G.nodes()],
                 edge_color='gray', node_size=500, font_color='black', ax=ax)
 
         # If you want to add labels (for example, from color_palette)
-        #node_labels = {node: f"{color_palette[data.x[n]]}" for n, node in enumerate(G.nodes())}
-        #nx.draw_networkx_labels(G, pos, labels=None, font_color='black', font_size=10, ax=ax)
+        node_labels = {node: f"{color_palette[data.x[n]]}" for n, node in enumerate(G.nodes())}
+        nx.draw_networkx_labels(G, pos, labels=node_labels, font_color='black', font_size=10, ax=ax)
 
     # Display all subplots in one window
     plt.show()
@@ -164,7 +163,7 @@ def sample_n_graphs(N, n): # returns dataloader
         assert len(color_palette) == c, "The color palette must contain exactly c colors."
 
         # Assign a random color to each node
-        color_idx = np.random.randint(0, c, size=(len(G.nodes())))
+        color_idx = np.random.randint(3, c, size=(len(G.nodes())))
         node_colors = {node: color_palette[color_idx[n]] for n, node in enumerate(G.nodes())}
 
         # Initialize a dictionary to store the size of the connected component for each node
@@ -189,7 +188,7 @@ def get_label(G, node_colors):
                 component_sizes[node] = component_size
     sum = 0.0
     for node in G.nodes():
-        sum -= component_sizes[node]
+        sum = sum - node_colors[node] - component_sizes[node]
     return sum#/len(G.nodes())
 
 def eval_agent(agent, N, T, n):
